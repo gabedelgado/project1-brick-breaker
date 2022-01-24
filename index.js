@@ -10,7 +10,7 @@ class Ball {
     this.color = "red";
     this.x = 295;
     this.y = 295;
-    this.currentDirection = 176; // sectioned into typical graph, 0 right, 90 up, 180 left, etc..
+    this.currentDirection = 90; // sectioned into typical graph, 0 right, 90 up, 180 left, etc..
   }
 
   moveBall = () => {
@@ -18,8 +18,8 @@ class Ball {
     let yMove = Math.sin((this.currentDirection * Math.PI) / 180);
     // this.x = Number(this.x + 6 * xMove).toFixed();
     // this.y = Number(this.y - 6 * yMove).toFixed();
-    this.x = this.x + 6 * xMove;
-    this.y = this.y - 6 * yMove;
+    this.x = this.x + 8 * xMove;
+    this.y = this.y - 8 * yMove;
 
     console.log("moving?", xMove, yMove);
   };
@@ -35,9 +35,51 @@ class Ball {
       this.currentDirection = 180 - this.currentDirection;
       this.moveBall();
     }
+    // need to include only hit for top
+    if (
+      this.x < player.x + player.width &&
+      this.x + this.radius > player.x &&
+      this.y < player.y + player.height &&
+      this.y + this.radius > player.y
+    ) {
+      //check for side collision by checking if ball net y under platform x
+      if (this.y <= player.y) {
+        this.currentDirection = 360 - this.currentDirection;
+      } else {
+        this.currentDirection = 180 - this.currentDirection;
+      }
+
+      this.moveBall();
+    }
+
+    // car.x < roadBlock.x + roadBlock.width &&
+    // car.x + car.width > roadBlock.x &&
+    // car.y < roadBlock.y + roadBlock.height &&
+    // car.y + car.height > roadBlock.y
   };
 }
+
+class Player {
+  constructor() {
+    this.width = 100;
+    this.height = 20;
+    this.x = 250;
+    this.y = canvas.height - 80;
+  }
+}
+
 let ball = new Ball();
+let player = new Player();
+
+window.addEventListener("keydown", (event) => {
+  if (event.code === "ArrowLeft") {
+    player.x = player.x - 10 >= 0 ? player.x - 10 : player.x;
+  } else if (event.code === "ArrowRight") {
+    player.x =
+      player.x + 10 + player.width <= canvas.width ? player.x + 10 : player.x;
+  }
+});
+
 let drawBall = () => {
   ctx.beginPath();
   ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
@@ -45,15 +87,21 @@ let drawBall = () => {
   ctx.closePath();
 };
 
+let drawPlayer = () => {
+  ctx.fillRect(player.x, player.y, player.width, player.height);
+};
+
 let animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ball.checkCollision();
   drawBall();
+  drawPlayer();
   window.requestAnimationFrame(animate);
 };
 
 let startGame = () => {
   setInterval(ball.moveBall, 20);
+
   animate();
 };
 
