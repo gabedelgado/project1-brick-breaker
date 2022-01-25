@@ -54,25 +54,19 @@ class Ball {
 
       this.moveBall();
     }
-
-    tiles.forEach((tile) => {
-      console.log(
-        `tested: ball.x: ${this.x}   ball.y: ${this.y}   obj.x: ${tile.x}   obj.y: ${tile.y}`
-      );
+    let hitTileIndex = "";
+    tiles.forEach((tile, index) => {
       if (generalCollision(this, tile)) {
-        console.log("hit something");
-        console.log(
-          `tested: ball.x: ${this.x}   ball.y: ${this.y}   obj.x: ${tile.x}   obj.y: ${tile.y}`
-        );
-
         if (this.y >= tile.y + tile.height || this.y <= tile.y) {
           this.currentDirection = 360 - this.currentDirection;
-          this.moveBall();
         } else {
           this.currentDirection = 180 - this.currentDirection;
         }
+        this.moveBall();
+        hitTileIndex = index;
       }
     });
+    hitTile(hitTileIndex);
   };
 }
 
@@ -131,27 +125,47 @@ let drawTiles = () => {
   });
 };
 
+let hitTile = (tileIndex) => {
+  if (tiles[tileIndex].health - 1 === 0) {
+    tiles.splice(tileIndex, 1);
+  }
+};
+
 let animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  //   ball.checkCollision();
-
   drawBall();
   drawPlayer();
   drawTiles();
-  if (ball.y < canvas.height) {
-    window.requestAnimationFrame(animate);
-  } else {
-    player.lives--;
-    ctx.font = "30px Arial";
+  ctx.fillStyle = "black";
+  ctx.font = "25px Arial";
+  if (!tiles.length) {
     ctx.fillText(
-      "You lost, you have " + player.lives + " lives remaining.",
-      70,
+      `You beat level ${level}! Press continue.`,
+      130,
       canvas.height / 2
     );
     document.getElementById("livesTag").innerText = player.lives;
     level++;
     document.getElementById("levelTag").innerText = level;
-    tiles = [];
+  } else if (ball.y < canvas.height) {
+    window.requestAnimationFrame(animate);
+  } else {
+    if (--player.lives === 0) {
+      ctx.fillText(
+        "You lost! For real this time! Press button to restart the game"
+      );
+      hardReset();
+    } else {
+      ctx.fillText(
+        `You lost a life! Press continue to try again.`,
+        75,
+        canvas.height / 2,
+        540
+      );
+      document.getElementById("gameButton").value = "Continue";
+    }
+
+    document.getElementById("livesTag").innerText = player.lives;
   }
 };
 
@@ -160,7 +174,7 @@ let fillTiles = () => {
   // minimum 3 rows , goes to 6 rows, then back to 3 with one more health point, back up to 6, etc etc,
 
   let numRows = level > 3 ? 3 + (level % 4) : 3 + level;
-  let startHealth = 1 + Math.floor(level - 1 / 3);
+  let startHealth = 1 + Math.floor((level - 1) / 3);
 
   for (let i = 0; i < numRows; i++) {
     for (let j = 0; j < 6; j++) {
@@ -178,6 +192,12 @@ let resetGame = () => {
   ball.currentDirection = Math.random() * 160 + 10;
   document.getElementById("livesTag").innerText = player.lives;
   fillTiles();
+};
+
+let hardReset = () => {
+  level = 1;
+  player.lives = 3;
+  tiles = [];
 };
 
 let startGame = () => {
