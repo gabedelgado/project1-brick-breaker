@@ -52,10 +52,20 @@ class Ball {
     }
     // platform collision
     else if (generalCollision(this, player)) {
-      this.currentDirection =
-        determineCollisionArea(this, player) === 1
-          ? 180 - this.currentDirection
-          : 360 - this.currentDirection;
+      if (determineCollisionArea(this, player) === 1) {
+        this.currentDirection = 180 - this.currentDirection;
+      } else {
+        let position = this.x - player.x < 0 ? 0 : this.x - player.x;
+        let rawDirection = 180 - Math.floor((position / player.width) * 180);
+
+        if (rawDirection < 20) {
+          this.currentDirection = 20;
+        } else if (rawDirection > 160) {
+          this.currentDirection = 160;
+        } else {
+          this.currentDirection = rawDirection;
+        }
+      }
       this.moveBall();
       // this.moveBall();
     }
