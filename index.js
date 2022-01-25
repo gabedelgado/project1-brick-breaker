@@ -54,7 +54,7 @@ class Ball {
 
       this.moveBall();
     }
-    let hitTileIndex = "";
+    let hitTileIndex = -1;
     tiles.forEach((tile, index) => {
       if (generalCollision(this, tile)) {
         if (this.y >= tile.y + tile.height || this.y <= tile.y) {
@@ -66,7 +66,9 @@ class Ball {
         hitTileIndex = index;
       }
     });
-    hitTile(hitTileIndex);
+    if (hitTileIndex != -1) {
+      hitTile(hitTileIndex);
+    }
   };
 }
 
@@ -151,9 +153,9 @@ let animate = () => {
     window.requestAnimationFrame(animate);
   } else {
     if (--player.lives === 0) {
-      ctx.fillText(
-        "You lost! For real this time! Press button to restart the game"
-      );
+      ctx.fillText("You lost! For real this time!", 150, canvas.height / 2);
+      ctx.fillText("Press restart to try again.", 155, canvas.height / 2 + 30);
+      document.getElementById("gameButton").value = "Restart";
       hardReset();
     } else {
       ctx.fillText(
@@ -191,6 +193,7 @@ let resetGame = () => {
   ball.y = 295;
   ball.currentDirection = Math.random() * 160 + 10;
   document.getElementById("livesTag").innerText = player.lives;
+  tiles = [];
   fillTiles();
 };
 
@@ -210,10 +213,4 @@ let startGame = () => {
   animate();
 };
 
-// window.addEventListener("keydown", (event) => {
-//   if (event.code === "ArrowDown") {
-//     console.log("pressed");
-//     ball.moveBall();
-//   }
-// });
 document.getElementById("gameButton").addEventListener("click", startGame);
