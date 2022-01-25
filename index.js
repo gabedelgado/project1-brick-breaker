@@ -98,7 +98,7 @@ class Player {
 let ball = new Ball();
 let player = new Player();
 let tiles = [];
-let level = 12;
+let level = 1;
 let ballMovementInterval = "";
 let ballCollisionInterval = "";
 
