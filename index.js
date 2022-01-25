@@ -4,6 +4,8 @@ const ctx = canvas.getContext("2d");
 canvas.height = 600;
 canvas.width = 600;
 
+let tileLinkPrefix = "./images/PNG/tile";
+
 class Tile {
   constructor(x, y, startHealth) {
     this.width = 85;
@@ -11,7 +13,13 @@ class Tile {
     this.x = x;
     this.y = y;
     this.health = startHealth;
+    this.image = new Image();
+    this.image.src = tileLinkPrefix + String(this.health) + ".png";
   }
+
+  updateImgSrc = () => {
+    this.image.src = tileLinkPrefix + String(this.health) + ".png";
+  };
 }
 
 class Ball {
@@ -21,6 +29,8 @@ class Ball {
     this.x = 295;
     this.y = 295;
     this.currentDirection = 90; // sectioned into typical graph, 0 right, 90 up, 180 left, etc..
+    this.image = new Image();
+    this.image.src = "./images/PNG/ball.png";
   }
 
   moveBall = () => {
@@ -80,13 +90,15 @@ class Player {
     this.x = 250;
     this.y = canvas.height - 80;
     this.lives = 3;
+    this.image = new Image();
+    this.image.src = "./images/PNG/platform_base.png";
   }
 }
 
 let ball = new Ball();
 let player = new Player();
 let tiles = [];
-let level = 1;
+let level = 12;
 let ballMovementInterval = "";
 let ballCollisionInterval = "";
 
@@ -110,27 +122,36 @@ let generalCollision = (ball, obj) => {
 
 let drawBall = () => {
   ctx.fillStyle = "blue";
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.closePath();
+  // ctx.beginPath();
+  // ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  // ctx.fill();
+  // ctx.closePath();
+  ctx.drawImage(
+    ball.image,
+    ball.x - ball.radius,
+    ball.y - ball.radius,
+    ball.radius * 2,
+    ball.radius * 2
+  );
 };
 
 let drawPlayer = () => {
-  ctx.fillStyle = "green";
-  ctx.fillRect(player.x, player.y, player.width, player.height);
+  // ctx.fillStyle = "green";
+  ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
 };
 
 let drawTiles = () => {
   ctx.fillStyle = "red";
   tiles.forEach((tile) => {
-    ctx.fillRect(tile.x, tile.y, tile.width, tile.height);
+    ctx.drawImage(tile.image, tile.x, tile.y, tile.width, tile.height);
   });
 };
 
 let hitTile = (tileIndex) => {
-  if (tiles[tileIndex].health - 1 === 0) {
+  if (--tiles[tileIndex].health === 0) {
     tiles.splice(tileIndex, 1);
+  } else {
+    tiles[tileIndex].updateImgSrc();
   }
 };
 
@@ -138,7 +159,7 @@ let fillTiles = () => {
   //filling tiles according to level, 25 px either side, 10 px gap, 80 wide
   // minimum 3 rows , goes to 6 rows, then back to 3 with one more health point, back up to 6, etc etc,
 
-  let numRows = level > 3 ? 3 + (level % 4) : 3 + level;
+  let numRows = level > 3 ? 4 + ((level - 1) % 3) : 3 + level;
   let startHealth = 1 + Math.floor((level - 1) / 3);
 
   for (let i = 0; i < numRows; i++) {
