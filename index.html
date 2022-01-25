@@ -8,9 +8,19 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <h1>BRICK BREAKER</h1>
     <div class="gameDiv">
-      <h1>BRICK BREAKER</h1>
       <canvas id="c" height="600" width="600"></canvas>
+      <div class="gameInfo">
+        <h2>Level: <span id="levelTag">1</span></h2>
+        <h2>Lives: <span id="livesTag">3</span></h2>
+        <input
+          type="button"
+          class="gameButton"
+          id="gameButton"
+          value="Start Game"
+        />
+      </div>
     </div>
 
     <script src="./index.js"></script>

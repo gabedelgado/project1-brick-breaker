@@ -1,14 +1,33 @@
+body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
 .gameDiv {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    
-
+    height: 1000;
+    margin-right: 15%;
+    margin-left: 15%;
 }
 
 #c {
     background-image: url("./images/background.png");
     background-size: contain;
     
+}
+
+h1 {
+    text-align: center;
+}
+
+.gameInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gameButton {
+    margin-top: 25px;
+    margin-bottom: 20px
 }
