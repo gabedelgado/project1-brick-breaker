@@ -39,12 +39,12 @@ class Ball {
       this.moveBall();
     }
     // left , right wall collision
-    if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
+    else if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
       this.currentDirection = 180 - this.currentDirection;
       this.moveBall();
     }
     // need to include only hit for top
-    if (generalCollision(this, player)) {
+    else if (generalCollision(this, player)) {
       //check for side collision by checking if ball net y under platform x
       if (this.y <= player.y) {
         this.currentDirection = 360 - this.currentDirection;
@@ -53,21 +53,22 @@ class Ball {
       }
 
       this.moveBall();
-    }
-    let hitTileIndex = -1;
-    tiles.forEach((tile, index) => {
-      if (generalCollision(this, tile)) {
-        if (this.y >= tile.y + tile.height || this.y <= tile.y) {
-          this.currentDirection = 360 - this.currentDirection;
-        } else {
-          this.currentDirection = 180 - this.currentDirection;
+    } else if (this.y - this.radius * 4 < tiles[tiles.length - 1].y) {
+      let hitTileIndex = -1;
+      tiles.forEach((tile, index) => {
+        if (generalCollision(this, tile)) {
+          if (this.y >= tile.y + tile.height || this.y <= tile.y) {
+            this.currentDirection = 360 - this.currentDirection;
+          } else {
+            this.currentDirection = 180 - this.currentDirection;
+          }
+          this.moveBall();
+          hitTileIndex = index;
         }
-        this.moveBall();
-        hitTileIndex = index;
+      });
+      if (hitTileIndex != -1) {
+        hitTile(hitTileIndex);
       }
-    });
-    if (hitTileIndex != -1) {
-      hitTile(hitTileIndex);
     }
   };
 }
@@ -133,44 +134,6 @@ let hitTile = (tileIndex) => {
   }
 };
 
-let animate = () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBall();
-  drawPlayer();
-  drawTiles();
-  ctx.fillStyle = "black";
-  ctx.font = "25px Arial";
-  if (!tiles.length) {
-    ctx.fillText(
-      `You beat level ${level}! Press continue.`,
-      130,
-      canvas.height / 2
-    );
-    document.getElementById("livesTag").innerText = player.lives;
-    level++;
-    document.getElementById("levelTag").innerText = level;
-  } else if (ball.y < canvas.height) {
-    window.requestAnimationFrame(animate);
-  } else {
-    if (--player.lives === 0) {
-      ctx.fillText("You lost! For real this time!", 150, canvas.height / 2);
-      ctx.fillText("Press restart to try again.", 155, canvas.height / 2 + 30);
-      document.getElementById("gameButton").value = "Restart";
-      hardReset();
-    } else {
-      ctx.fillText(
-        `You lost a life! Press continue to try again.`,
-        75,
-        canvas.height / 2,
-        540
-      );
-      document.getElementById("gameButton").value = "Continue";
-    }
-
-    document.getElementById("livesTag").innerText = player.lives;
-  }
-};
-
 let fillTiles = () => {
   //filling tiles according to level, 25 px either side, 10 px gap, 80 wide
   // minimum 3 rows , goes to 6 rows, then back to 3 with one more health point, back up to 6, etc etc,
@@ -181,7 +144,7 @@ let fillTiles = () => {
   for (let i = 0; i < numRows; i++) {
     for (let j = 0; j < 6; j++) {
       tiles.push(
-        new Tile(2 + j * 80 + 16 * (j + 1), 20 * i + 14 * (i + 1), startHealth)
+        new Tile(2 + j * 80 + 16 * (j + 1), 20 * i + 14 * (i + 1), startHealth) //+2 is arbitary for centering (visual)
       );
     }
   }
@@ -203,13 +166,68 @@ let hardReset = () => {
   tiles = [];
 };
 
+let clearIntervals = () => {
+  clearInterval(ballMovementInterval);
+  clearInterval(ballCollisionInterval);
+};
+
+let setIntervals = () => {
+  ballMovementInterval = setInterval(ball.moveBall, 20);
+  ballCollisionInterval = setInterval(ball.checkCollision, 20);
+};
+
+let beatLevel = () => {
+  ctx.fillStyle = "black";
+  ctx.font = "25px Arial";
+  ctx.fillText(
+    `You beat level ${level}! Press continue.`,
+    125,
+    canvas.height / 2
+  );
+  document.getElementById("livesTag").innerText = player.lives;
+  level++;
+  document.getElementById("levelTag").innerText = level;
+};
+
+let lostLife = () => {
+  ctx.fillStyle = "black";
+  ctx.font = "25px Arial";
+  if (--player.lives === 0) {
+    ctx.fillText("You lost! For real this time!", 150, canvas.height / 2);
+    ctx.fillText("Press restart to try again.", 155, canvas.height / 2 + 30);
+    document.getElementById("gameButton").value = "Restart";
+    hardReset();
+  } else {
+    ctx.fillText(
+      `You lost a life! Press continue to try again.`,
+      75,
+      canvas.height / 2,
+      540
+    );
+    document.getElementById("gameButton").value = "Continue";
+  }
+  document.getElementById("livesTag").innerText = player.lives;
+};
+
+let animate = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBall();
+  drawPlayer();
+  drawTiles();
+  if (!tiles.length) {
+    beatLevel();
+  } else if (ball.y < canvas.height) {
+    window.requestAnimationFrame(animate);
+  } else {
+    lostLife();
+  }
+};
+
 let startGame = () => {
   // reset player, ball, tiles according to level, player health
   resetGame();
-  clearInterval(ballMovementInterval);
-  clearInterval(ballCollisionInterval);
-  ballMovementInterval = setInterval(ball.moveBall, 20);
-  ballCollisionInterval = setInterval(ball.checkCollision, 20);
+  clearIntervals();
+  setIntervals();
   animate();
 };
 
