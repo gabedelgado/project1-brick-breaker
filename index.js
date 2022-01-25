@@ -1,6 +1,5 @@
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
-
 canvas.height = 600;
 canvas.width = 600;
 
@@ -36,8 +35,6 @@ class Ball {
   moveBall = () => {
     let xMove = Math.cos((this.currentDirection * Math.PI) / 180);
     let yMove = Math.sin((this.currentDirection * Math.PI) / 180);
-    // this.x = Number(this.x + 6 * xMove).toFixed();
-    // this.y = Number(this.y - 6 * yMove).toFixed();
     this.x = this.x + 5 * xMove;
     this.y = this.y - 5 * yMove;
   };
@@ -53,26 +50,26 @@ class Ball {
       this.currentDirection = 180 - this.currentDirection;
       this.moveBall();
     }
-    // need to include only hit for top
+    // platform collision
     else if (generalCollision(this, player)) {
-      //check for side collision by checking if ball net y under platform x
-      if (this.y <= player.y) {
-        this.currentDirection = 360 - this.currentDirection;
-      } else {
-        this.currentDirection = 180 - this.currentDirection;
-      }
-
+      this.currentDirection =
+        determineCollisionArea(this, player) === 1
+          ? 180 - this.currentDirection
+          : 360 - this.currentDirection;
       this.moveBall();
-    } else if (this.y - this.radius * 4 < tiles[tiles.length - 1].y) {
+      // this.moveBall();
+    }
+    // tile collision (checking only if ball near lowest hanging tile)
+    else if (this.y - this.radius * 4 < tiles[tiles.length - 1].y) {
       let hitTileIndex = -1;
       tiles.forEach((tile, index) => {
         if (generalCollision(this, tile)) {
-          if (this.y >= tile.y + tile.height || this.y <= tile.y) {
-            this.currentDirection = 360 - this.currentDirection;
-          } else {
-            this.currentDirection = 180 - this.currentDirection;
-          }
+          this.currentDirection =
+            determineCollisionArea(this, tile) === 1
+              ? 180 - this.currentDirection
+              : 360 - this.currentDirection;
           this.moveBall();
+          // this.moveBall();
           hitTileIndex = index;
         }
       });
@@ -95,29 +92,28 @@ class Player {
   }
 }
 
-let ball = new Ball();
-let player = new Player();
-let tiles = [];
-let level = 1;
-let ballMovementInterval = "";
-let ballCollisionInterval = "";
-
-window.addEventListener("keydown", (event) => {
-  if (event.code === "ArrowLeft") {
-    player.x = player.x - 10 >= 0 ? player.x - 10 : player.x;
-  } else if (event.code === "ArrowRight") {
-    player.x =
-      player.x + 10 + player.width <= canvas.width ? player.x + 10 : player.x;
-  }
-});
-
+// ***** HELPER FUNCTIONS *****
 let generalCollision = (ball, obj) => {
   return (
-    ball.x < obj.x + obj.width &&
+    ball.x - ball.radius < obj.x + obj.width &&
     ball.x + ball.radius > obj.x &&
     ball.y - ball.radius < obj.y + obj.height &&
     ball.y + ball.radius > obj.y
   );
+};
+
+let determineCollisionArea = (ball, tile) => {
+  let ballRelY = ball.y - (tile.y + tile.height / 2);
+  let slope = tile.height / 2 / (tile.width / 2);
+  let ballRelX = ball.x - (tile.x + tile.width / 2);
+  if (
+    (ballRelY < slope * ballRelX && ballRelY > -1 * slope * ballRelX) ||
+    (ballRelY < -1 * slope * ballRelX && ballRelY > slope * ballRelX)
+  ) {
+    return 1;
+  } else {
+    return 2;
+  }
 };
 
 let drawBall = () => {
@@ -151,7 +147,6 @@ let hitTile = (tileIndex) => {
 let fillTiles = () => {
   //filling tiles according to level, 25 px either side, 10 px gap, 80 wide
   // minimum 3 rows , goes to 6 rows, then back to 3 with one more health point, back up to 6, etc etc,
-
   let numRows = level > 3 ? 4 + ((level - 1) % 3) : 3 + level;
   let startHealth = 1 + Math.floor((level - 1) / 3);
 
@@ -162,14 +157,19 @@ let fillTiles = () => {
       );
     }
   }
+  // testing code below
+  // tiles.push(new Tile(300, 150, 10));
 };
 
 let resetGame = () => {
   player.x = 250;
-  ball.x = 295;
-  ball.y = 295;
+  ball.x = 250;
+  ball.y = 400;
   ball.currentDirection = Math.random() * 160 + 10;
+  // testing code below
+  // ball.currentDirection = -135;
   document.getElementById("livesTag").innerText = player.lives;
+  document.getElementById("levelTag").innerText = level;
   tiles = [];
   fillTiles();
 };
@@ -201,6 +201,7 @@ let beatLevel = () => {
   document.getElementById("livesTag").innerText = player.lives;
   level++;
   document.getElementById("levelTag").innerText = level;
+  clearIntervals();
 };
 
 let lostLife = () => {
@@ -221,8 +222,18 @@ let lostLife = () => {
     document.getElementById("gameButton").value = "Continue";
   }
   document.getElementById("livesTag").innerText = player.lives;
+  clearIntervals();
 };
 
+// ***** GAME ITEMS *****
+let ball = new Ball();
+let player = new Player();
+let tiles = [];
+let level = 1;
+let ballMovementInterval = "";
+let ballCollisionInterval = "";
+
+// ***** GAME ENGINE *****
 let animate = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBall();
@@ -238,11 +249,23 @@ let animate = () => {
 };
 
 let startGame = () => {
-  // reset player, ball, tiles according to level, player health
   resetGame();
   clearIntervals();
   setIntervals();
   animate();
 };
+
+// testing code below
+// window.addEventListener("keydown", (event) => {
+//   if (event.code === "ArrowDown") {
+//     ball.moveBall();
+//     ball.checkCollision();
+//   }
+// });
+
+// ***** ADDING EVENT LISTENERS *****
+canvas.addEventListener("mousemove", (event) => {
+  player.x = event.offsetX;
+});
 
 document.getElementById("gameButton").addEventListener("click", startGame);
