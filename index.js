@@ -121,11 +121,6 @@ let generalCollision = (ball, obj) => {
 };
 
 let drawBall = () => {
-  ctx.fillStyle = "blue";
-  // ctx.beginPath();
-  // ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-  // ctx.fill();
-  // ctx.closePath();
   ctx.drawImage(
     ball.image,
     ball.x - ball.radius,
@@ -136,12 +131,10 @@ let drawBall = () => {
 };
 
 let drawPlayer = () => {
-  // ctx.fillStyle = "green";
   ctx.drawImage(player.image, player.x, player.y, player.width, player.height);
 };
 
 let drawTiles = () => {
-  ctx.fillStyle = "red";
   tiles.forEach((tile) => {
     ctx.drawImage(tile.image, tile.x, tile.y, tile.width, tile.height);
   });
@@ -198,7 +191,7 @@ let setIntervals = () => {
 };
 
 let beatLevel = () => {
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "white";
   ctx.font = "25px Arial";
   ctx.fillText(
     `You beat level ${level}! Press continue.`,
@@ -211,7 +204,7 @@ let beatLevel = () => {
 };
 
 let lostLife = () => {
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "white";
   ctx.font = "25px Arial";
   if (--player.lives === 0) {
     ctx.fillText("You lost! For real this time!", 150, canvas.height / 2);
