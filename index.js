@@ -35,8 +35,8 @@ class Ball {
   moveBall = () => {
     let xMove = Math.cos((this.currentDirection * Math.PI) / 180);
     let yMove = Math.sin((this.currentDirection * Math.PI) / 180);
-    this.x = this.x + 5 * xMove;
-    this.y = this.y - 5 * yMove;
+    this.x = this.x + 8 * xMove;
+    this.y = this.y - 8 * yMove;
   };
 
   checkCollision = () => {
@@ -114,7 +114,7 @@ let generalCollision = (ball, obj) => {
 
 let determineCollisionArea = (ball, tile) => {
   let ballRelY = ball.y - (tile.y + tile.height / 2);
-  let slope = tile.height / 2 / (tile.width / 2);
+  let slope = tile.height / 2 / (tile.width / 2 - ball.radius);
   let ballRelX = ball.x - (tile.x + tile.width / 2);
   if (
     (ballRelY < slope * ballRelX && ballRelY > -1 * slope * ballRelX) ||
@@ -196,8 +196,8 @@ let clearIntervals = () => {
 };
 
 let setIntervals = () => {
-  ballMovementInterval = setInterval(ball.moveBall, 20);
-  ballCollisionInterval = setInterval(ball.checkCollision, 20);
+  ballMovementInterval = setInterval(ball.moveBall, 15);
+  ballCollisionInterval = setInterval(ball.checkCollision, 14);
 };
 
 let beatLevel = () => {
