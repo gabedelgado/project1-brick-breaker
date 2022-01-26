@@ -6,7 +6,7 @@ body {
 
 .gameDiv {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
     height: 1000;
     margin-right: 15%;
