@@ -74,7 +74,7 @@ let fillTiles = () => {
 
 let resetGame = () => {
   player.x = 250;
-  ball.x = 207;
+  ball.x = 300;
   ball.y = 400;
   ball.currentDirection = Math.random() * 160 + 10;
   // testing code below
