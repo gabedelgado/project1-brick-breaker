@@ -81,6 +81,7 @@ let resetGame = () => {
   // ball.currentDirection = 91;
   document.getElementById("livesTag").innerText = player.lives;
   document.getElementById("levelTag").innerText = level;
+  document.getElementById("gameButton").value = "Continue";
   tiles = [];
   fillTiles();
 };
@@ -109,10 +110,10 @@ let setIntervals = () => {
 
 let beatLevel = () => {
   ctx.fillStyle = "white";
-  ctx.font = "25px Arial";
+  ctx.font = "18px  'Press Start 2P'";
   ctx.fillText(
     `You beat level ${level}! Press continue.`,
-    125,
+    7,
     canvas.height / 2
   );
   document.getElementById("livesTag").innerText = player.lives;
@@ -123,22 +124,20 @@ let beatLevel = () => {
 
 let lostLife = () => {
   ctx.fillStyle = "white";
-  ctx.font = "25px Arial";
+  ctx.font = "18px  'Press Start 2P'";
   if (--player.lives === 0) {
-    ctx.fillText("You lost! For real this time!", 150, canvas.height / 2);
-    ctx.fillText("Press restart to try again.", 155, canvas.height / 2 + 30);
+    ctx.fillText("You lost! For real this time!", 45, canvas.height / 2);
+    ctx.fillText("Press restart to try again.", 65, canvas.height / 2 + 30);
     document.getElementById("gameButton").value = "Restart";
+    document.getElementById("livesTag").innerText = player.lives;
     hardReset();
   } else {
-    ctx.fillText(
-      `You lost a life! Press continue to try again.`,
-      75,
-      canvas.height / 2,
-      540
-    );
+    ctx.fillText(`You lost a life!`, 150, canvas.height / 2);
+    ctx.fillText(` Press continue to try again.`, 35, canvas.height / 2 + 30);
     document.getElementById("gameButton").value = "Continue";
+    document.getElementById("livesTag").innerText = player.lives;
   }
-  document.getElementById("livesTag").innerText = player.lives;
+
   clearIntervals();
 };
 
