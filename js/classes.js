@@ -16,6 +16,18 @@ class Tile {
   };
 }
 
+class Player {
+  constructor() {
+    this.width = 100;
+    this.height = 20;
+    this.x = 250;
+    this.y = 520;
+    this.lives = 3;
+    this.image = new Image();
+    this.image.src = "./images/PNG/platform_base.png";
+  }
+}
+
 class Ball {
   constructor() {
     this.radius = 15;
@@ -51,11 +63,13 @@ class Ball {
       this.currentDirection = 360 - this.currentDirection;
       this.moveBall();
     }
+
     // left , right wall collision
     else if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
       this.currentDirection = 180 - this.currentDirection;
       this.moveBall();
     }
+
     // platform collision
     else if (generalCollision(this, player)) {
       if (determineCollisionArea(this, player) === 1) {
@@ -74,6 +88,7 @@ class Ball {
       }
       this.moveBall();
     }
+
     // tile collision (checking only if ball near lowest hanging tile)
     else if (this.y - this.radius * 4 < tiles[tiles.length - 1].y) {
       //checking which tiles were hit
@@ -83,6 +98,7 @@ class Ball {
           hitTileIndex.push(index);
         }
       });
+
       //picking the closest tile to be the one to get hit and base the reaction off of
       let closestIndex = -1;
       let closestDistance = 10000;
@@ -98,6 +114,7 @@ class Ball {
         }
       });
 
+      //react to and hit the closest tile
       if (closestIndex !== -1) {
         let twotop =
           hitTileIndex.length >= 2
@@ -116,16 +133,4 @@ class Ball {
       }
     }
   };
-}
-
-class Player {
-  constructor() {
-    this.width = 100;
-    this.height = 20;
-    this.x = 250;
-    this.y = 520;
-    this.lives = 3;
-    this.image = new Image();
-    this.image.src = "./images/PNG/platform_base.png";
-  }
 }
