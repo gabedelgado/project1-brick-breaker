@@ -181,7 +181,7 @@ let startGame = () => {
 
 // ***** ADDING EVENT LISTENERS *****
 canvas.addEventListener("mousemove", (event) => {
-  player.x = event.offsetX;
+  player.x = event.offsetX - player.width / 2;
 });
 
 document.getElementById("gameButton").addEventListener("click", startGame);
