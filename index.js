@@ -114,7 +114,7 @@ let generalCollision = (ball, obj) => {
 
 let determineCollisionArea = (ball, tile) => {
   let ballRelY = ball.y - (tile.y + tile.height / 2);
-  let slope = tile.height / 2 / (tile.width / 2 - ball.radius);
+  let slope = tile.height / 2 / (tile.width / 2 - ball.radius * 1.5);
   let ballRelX = ball.x - (tile.x + tile.width / 2);
   if (
     (ballRelY < slope * ballRelX && ballRelY > -1 * slope * ballRelX) ||
