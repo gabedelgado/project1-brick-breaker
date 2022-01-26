@@ -3,104 +3,104 @@ const ctx = canvas.getContext("2d");
 canvas.height = 600;
 canvas.width = 600;
 
-let tileLinkPrefix = "./images/PNG/tile";
+// let tileLinkPrefix = "./images/PNG/tile";
 
-class Tile {
-  constructor(x, y, startHealth) {
-    this.width = 85;
-    this.height = 20;
-    this.x = x;
-    this.y = y;
-    this.health = startHealth;
-    this.image = new Image();
-    this.image.src = tileLinkPrefix + String(this.health) + ".png";
-  }
+// class Tile {
+//   constructor(x, y, startHealth) {
+//     this.width = 85;
+//     this.height = 20;
+//     this.x = x;
+//     this.y = y;
+//     this.health = startHealth;
+//     this.image = new Image();
+//     this.image.src = tileLinkPrefix + String(this.health) + ".png";
+//   }
 
-  updateImgSrc = () => {
-    this.image.src = tileLinkPrefix + String(this.health) + ".png";
-  };
-}
+//   updateImgSrc = () => {
+//     this.image.src = tileLinkPrefix + String(this.health) + ".png";
+//   };
+// }
 
-class Ball {
-  constructor() {
-    this.radius = 15;
-    this.color = "red";
-    this.x = 295;
-    this.y = 295;
-    this.currentDirection = 90; // sectioned into typical graph, 0 right, 90 up, 180 left, etc..
-    this.image = new Image();
-    this.image.src = "./images/PNG/ball.png";
-  }
+// class Ball {
+//   constructor() {
+//     this.radius = 15;
+//     this.color = "red";
+//     this.x = 295;
+//     this.y = 295;
+//     this.currentDirection = 90; // sectioned into typical graph, 0 right, 90 up, 180 left, etc..
+//     this.image = new Image();
+//     this.image.src = "./images/PNG/ball.png";
+//   }
 
-  moveBall = () => {
-    let xMove = Math.cos((this.currentDirection * Math.PI) / 180);
-    let yMove = Math.sin((this.currentDirection * Math.PI) / 180);
-    this.x = this.x + 8 * xMove;
-    this.y = this.y - 8 * yMove;
-  };
+//   moveBall = () => {
+//     let xMove = Math.cos((this.currentDirection * Math.PI) / 180);
+//     let yMove = Math.sin((this.currentDirection * Math.PI) / 180);
+//     this.x = this.x + 8 * xMove;
+//     this.y = this.y - 8 * yMove;
+//   };
 
-  checkCollision = () => {
-    // checking for top wall collision
-    if (this.y - this.radius < 0) {
-      this.currentDirection = 360 - this.currentDirection;
-      this.moveBall();
-    }
-    // left , right wall collision
-    else if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
-      this.currentDirection = 180 - this.currentDirection;
-      this.moveBall();
-    }
-    // platform collision
-    else if (generalCollision(this, player)) {
-      if (determineCollisionArea(this, player) === 1) {
-        this.currentDirection = 180 - this.currentDirection;
-      } else {
-        let position = this.x - player.x < 0 ? 0 : this.x - player.x;
-        let rawDirection = 180 - Math.floor((position / player.width) * 180);
+//   checkCollision = () => {
+//     // checking for top wall collision
+//     if (this.y - this.radius < 0) {
+//       this.currentDirection = 360 - this.currentDirection;
+//       this.moveBall();
+//     }
+//     // left , right wall collision
+//     else if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
+//       this.currentDirection = 180 - this.currentDirection;
+//       this.moveBall();
+//     }
+//     // platform collision
+//     else if (generalCollision(this, player)) {
+//       if (determineCollisionArea(this, player) === 1) {
+//         this.currentDirection = 180 - this.currentDirection;
+//       } else {
+//         let position = this.x - player.x < 0 ? 0 : this.x - player.x;
+//         let rawDirection = 180 - Math.floor((position / player.width) * 180);
 
-        if (rawDirection < 20) {
-          this.currentDirection = 20;
-        } else if (rawDirection > 160) {
-          this.currentDirection = 160;
-        } else {
-          this.currentDirection = rawDirection;
-        }
-      }
-      this.moveBall();
-      // this.moveBall();
-    }
-    // tile collision (checking only if ball near lowest hanging tile)
-    else if (this.y - this.radius * 4 < tiles[tiles.length - 1].y) {
-      let hitTileIndex = -1;
-      tiles.forEach((tile, index) => {
-        if (generalCollision(this, tile)) {
-          this.currentDirection =
-            determineCollisionArea(this, tile) === 1
-              ? 180 - this.currentDirection
-              : 360 - this.currentDirection;
-          this.moveBall();
-          // this.moveBall();
-          hitTileIndex = index;
-        }
-      });
-      if (hitTileIndex != -1) {
-        hitTile(hitTileIndex);
-      }
-    }
-  };
-}
+//         if (rawDirection < 20) {
+//           this.currentDirection = 20;
+//         } else if (rawDirection > 160) {
+//           this.currentDirection = 160;
+//         } else {
+//           this.currentDirection = rawDirection;
+//         }
+//       }
+//       this.moveBall();
+//       // this.moveBall();
+//     }
+//     // tile collision (checking only if ball near lowest hanging tile)
+//     else if (this.y - this.radius * 4 < tiles[tiles.length - 1].y) {
+//       let hitTileIndex = -1;
+//       tiles.forEach((tile, index) => {
+//         if (generalCollision(this, tile)) {
+//           this.currentDirection =
+//             determineCollisionArea(this, tile) === 1
+//               ? 180 - this.currentDirection
+//               : 360 - this.currentDirection;
+//           this.moveBall();
+//           // this.moveBall();
+//           hitTileIndex = index;
+//         }
+//       });
+//       if (hitTileIndex != -1) {
+//         hitTile(hitTileIndex);
+//       }
+//     }
+//   };
+// }
 
-class Player {
-  constructor() {
-    this.width = 100;
-    this.height = 20;
-    this.x = 250;
-    this.y = canvas.height - 80;
-    this.lives = 3;
-    this.image = new Image();
-    this.image.src = "./images/PNG/platform_base.png";
-  }
-}
+// class Player {
+//   constructor() {
+//     this.width = 100;
+//     this.height = 20;
+//     this.x = 250;
+//     this.y = canvas.height - 80;
+//     this.lives = 3;
+//     this.image = new Image();
+//     this.image.src = "./images/PNG/platform_base.png";
+//   }
+// }
 
 // ***** HELPER FUNCTIONS *****
 let generalCollision = (ball, obj) => {
@@ -173,11 +173,11 @@ let fillTiles = () => {
 
 let resetGame = () => {
   player.x = 250;
-  ball.x = 250;
+  ball.x = 207;
   ball.y = 400;
-  ball.currentDirection = Math.random() * 160 + 10;
+  // ball.currentDirection = Math.random() * 160 + 10;
   // testing code below
-  // ball.currentDirection = -135;
+  ball.currentDirection = 91;
   document.getElementById("livesTag").innerText = player.lives;
   document.getElementById("levelTag").innerText = level;
   tiles = [];
@@ -197,7 +197,13 @@ let clearIntervals = () => {
 
 let setIntervals = () => {
   ballMovementInterval = setInterval(ball.moveBall, 15);
-  ballCollisionInterval = setInterval(ball.checkCollision, 14);
+  ballCollisionInterval = setInterval(
+    ball.checkCollision,
+    15,
+    tiles,
+    player,
+    canvas
+  );
 };
 
 let beatLevel = () => {
