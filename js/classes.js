@@ -61,12 +61,15 @@ class Ball {
     // checking for top wall collision
     if (this.y - this.radius < 0) {
       this.currentDirection = 360 - this.currentDirection;
+      this.y = this.radius;
       this.moveBall();
     }
 
     // left , right wall collision
     else if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
       this.currentDirection = 180 - this.currentDirection;
+      this.x =
+        this.x - this.radius < 0 ? this.radius : canvas.width - this.radius;
       this.moveBall();
     }
 
