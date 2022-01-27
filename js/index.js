@@ -109,6 +109,7 @@ let setIntervals = () => {
 };
 
 let beatLevel = () => {
+  levelUpSound.play();
   ctx.fillStyle = "white";
   ctx.font = "18px  'Press Start 2P'";
   ctx.fillText(
@@ -125,6 +126,7 @@ let beatLevel = () => {
 let lostLife = () => {
   ctx.fillStyle = "white";
   ctx.font = "18px  'Press Start 2P'";
+  youLoseSound.play();
   if (--player.lives === 0) {
     ctx.fillText("You lost! For real this time!", 45, canvas.height / 2);
     ctx.fillText("Press restart to try again.", 65, canvas.height / 2 + 30);
@@ -148,6 +150,10 @@ let tiles = [];
 let level = 1;
 let ballMovementInterval = "";
 let ballCollisionInterval = "";
+let levelUpSound = new Sound("./sounds/126422__makofox__level-up.wav");
+let youLoseSound = new Sound(
+  "./sounds/404743__owlstorm__retro-video-game-sfx-fail.wav"
+);
 
 // ***** GAME ENGINE *****
 let animate = () => {

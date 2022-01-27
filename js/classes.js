@@ -1,5 +1,19 @@
 let tileLinkPrefix = "./images/PNG/tile";
 
+class Sound {
+  constructor(source) {
+    this.sound = document.createElement("audio");
+    this.sound.src = source;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+  }
+  play = () => {
+    this.sound.play();
+  };
+}
+
 class Tile {
   constructor(x, y, startHealth) {
     this.width = 85;
@@ -62,16 +76,19 @@ class Ball {
     if (this.y - this.radius < 0) {
       this.currentDirection = 360 - this.currentDirection;
       this.moveBall();
+      new Sound("./sounds/466556__danieldouch__little-blip.wav").play();
     }
 
     // left , right wall collision
     else if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
       this.currentDirection = 180 - this.currentDirection;
       this.moveBall();
+      new Sound("./sounds/466556__danieldouch__little-blip.wav").play();
     }
 
     // platform collision
     else if (generalCollision(this, player)) {
+      new Sound("./sounds/466556__danieldouch__little-blip.wav").play();
       if (determineCollisionArea(this, player) === 1) {
         this.currentDirection = 180 - this.currentDirection;
       } else {
@@ -130,6 +147,7 @@ class Ball {
         } else {
           this.currentDirection = 360 - this.currentDirection;
         }
+        new Sound("./sounds/466556__danieldouch__little-blip.wav").play();
         this.moveBall();
         hitTile(closestIndex);
       }
