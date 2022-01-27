@@ -114,6 +114,8 @@ class Ball {
         }
       });
 
+      //  BRANCH TEST
+
       //react to and hit the closest tile
       if (closestIndex !== -1) {
         let twotop =
