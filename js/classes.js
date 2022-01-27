@@ -30,7 +30,7 @@ class Player {
 
 class Ball {
   constructor() {
-    this.radius = 15;
+    this.radius = 10;
     this.color = "red";
     this.x = 295;
     this.y = 295;
